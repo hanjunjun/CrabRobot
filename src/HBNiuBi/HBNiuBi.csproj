@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <OutputPath>../../\dist\Debug\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>output</AppendTargetFrameworkToOutputPath>
+    <DefineConstants>TRACE;NETFX_4</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x64.dll" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x64.exp" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x64.ilk" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x64.lib" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x64.pdb" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x86.dll" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x86.exp" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x86.ilk" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x86.lib" />
+    <None Remove="Authentication\Resources\WinAuth.YubiKey.x86.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Authentication\Resources\WinAuth.YubiKey.x64.dll" />
+    <EmbeddedResource Include="Authentication\Resources\WinAuth.YubiKey.x86.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Plugin\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle" Version="1.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NLog" Version="4.7.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="dm.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dmc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="RegDll.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\chonglian.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\jinruwow.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\login0.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\login1.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\login2.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\loginSelect.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\shilingtishi.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\wenhao.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="从系统里卸载大漠插件.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="注册大漠插件到系统.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
