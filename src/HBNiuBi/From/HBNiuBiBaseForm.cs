@@ -19,7 +19,10 @@ namespace HBNiuBi.From
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Load += (send, args) =>
             {
+#if DEBUG
+#else
                 this.SetFormTop(this.Handle);
+#endif
             };
         }
 

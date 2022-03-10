@@ -5,9 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace HBNiuBi.Model
 {
+    public static class ScriptContainer
+    {
+        public static ConcurrentDictionary<string, ScriptModel> ScriptTaskContainer = new ConcurrentDictionary<string, ScriptModel>();
+    }
     public class ScriptItemModel
     {
         /// <summary>
@@ -34,6 +39,14 @@ namespace HBNiuBi.Model
         /// 密码
         /// </summary>
         public string Password { get; set; }
+        /// <summary>
+        /// 序列号
+        /// </summary>
+        public string SerialNumber { get; set; }
+        /// <summary>
+        /// 还原码
+        /// </summary>
+        public string RestoreCode { get; set; }
         /// <summary>
         /// 动态码
         /// </summary>
@@ -68,7 +81,8 @@ namespace HBNiuBi.Model
         /// <summary>
         /// 脚本信息
         /// </summary>
-        private ScriptItemModel scriptItemModel;
+        public ScriptItemModel scriptItemModel;
+        public DMSecret dMSecret;
         /// <summary>
         /// dm对象
         /// </summary>
@@ -96,6 +110,16 @@ namespace HBNiuBi.Model
 
         public ScriptModel(ScriptItemModel scriptItemModel, DMSecret dMSecret)
         {
+            this.scriptItemModel = scriptItemModel;
+            this.dMSecret = dMSecret;
+            //注册任务
+            RegisterWowDynamicCode();
+            RegisterExecuteScript();
+        }
+
+        public void Start()
+        {
+            DM.SetShowErrorMsg(0);
             var path = AppDomain.CurrentDomain.BaseDirectory + Process.GetCurrentProcess().ProcessName + ".exe";
             var result = DM.Reg(dMSecret.Code, dMSecret.Ver);
             if (result != 1)
@@ -114,11 +138,13 @@ namespace HBNiuBi.Model
             }
             var dun = @$"f2 <c:\windows\system32\calc.exe> <{path}>";
             result = DM.DmGuard(1, dun);
-            if (result != 1)
-            {
-                throw new Exception($"f2 启动失败！");
-            }
-            this.scriptItemModel = scriptItemModel;
+            //if (result != 1)
+            //{
+            //    throw new Exception($"f2 启动失败！");
+            //}
+            //启动任务
+            registerWowDynamicCodeTask.Start();
+            RegisterExecuteScriptTask.Start();
         }
         /// <summary>
         /// 注册wow动态码自动刷新服务 7秒一次
@@ -127,10 +153,21 @@ namespace HBNiuBi.Model
         {
             registerWowDynamicCodeTask = new Task((obj) =>
               {
+                  Debug.WriteLine("注册码刷新任务");
                   Thread.Sleep(7 * 1000);
               }, null
             , TaskCreationOptions.LongRunning);
-            registerWowDynamicCodeTask.Start();
+        }
+
+        private void RegisterExecuteScript()
+        {
+            RegisterExecuteScriptTask = new Task((obj) =>
+            {
+                Debug.WriteLine("脚本执行中...");
+                this.scriptAction();
+                Thread.Sleep(7 * 1000);
+            }, null
+            , TaskCreationOptions.LongRunning);
         }
 
         public void SetScriptAction(Action action)

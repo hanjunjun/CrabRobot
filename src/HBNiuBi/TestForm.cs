@@ -37,6 +37,7 @@ namespace HBNiuBi
         private void button1_Click(object sender, EventArgs e)
         {
             dm = new dmsoft();
+            dm.SetShowErrorMsg(0);
             long s = dm.Reg("cx100115963871588f42fe33632fc733792e2ad125d", "kqOtu");
             var result = dm.DmGuard(1, "memory2");
             result = dm.DmGuard(1, "hm 0 1");
@@ -224,6 +225,8 @@ namespace HBNiuBi
             //var key = e.KeyCode.ToString();
             //keyMonitor.Text = key;
         }
+        [DllImport("user32", EntryPoint = "GetWindowThreadProcessId")]
+        private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int pid);
         int hwnd = -1;
         private void button13_Click(object sender, EventArgs e)
         {
@@ -231,7 +234,7 @@ namespace HBNiuBi
             {
                 //启动游戏
                 var process = System.Diagnostics.Process.Start(wowGamePath.Text);
-                Thread.Sleep(5000);
+                Thread.Sleep(5000); 
                 txtPid.SetTextBox(() =>
                 {
                     txtPid.Text = process.Id.ToString();
@@ -261,7 +264,18 @@ namespace HBNiuBi
                 //显卡兼容问题会弹窗
                 var result = -1;
                 dm.SetPath(path);
-                hwnd = dm.FindWindow("", "魔兽世界");
+                while (true)
+                {
+                    hwnd = dm.FindWindow("", "魔兽世界");
+                    Debug.WriteLine($"wow hwnd:{hwnd}");
+                    Debug.WriteLine($"process hwnd:{process.MainWindowHandle}");
+                    if (hwnd == (int)process.MainWindowHandle)
+                    {
+                        Debug.WriteLine($"wow hwnd:{hwnd}=process hwnd:{process.MainWindowHandle} break");
+                        break;
+                    }
+                    Thread.Sleep(500);
+                }
                 var dmbind = dm.BindWindowEx(hwnd, "gdi", "dx.mouse.position.lock.api", "dx.keypad.raw.input", "", 0);
                 Task.Factory.StartNew(() =>
                 {
@@ -291,8 +305,10 @@ namespace HBNiuBi
                     //Thread.Sleep(5000);
                 }).Wait();
                 Thread.Sleep(8000);
+
                 //句柄变更需要重新获取
                 hwnd = dm.FindWindow("", "魔兽世界");
+                Debug.WriteLine($"wow hwnd:{hwnd}");
                 dmbind = dm.BindWindowEx(hwnd, displayModel, "dx.mouse.input.lock.api3", keyboardModel, "", 0);
                 //移动窗口
                 var results = MoveWindow(hwnd, 0, 0, 1253, 706, true);
