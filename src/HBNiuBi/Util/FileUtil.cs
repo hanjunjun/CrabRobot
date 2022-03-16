@@ -22,12 +22,31 @@ namespace HBNiuBi.Util
 
             return 0;
         }
-        public static void DeleteDirectory(string path)
+        //public static void DeleteDirectory(string path)
+        //{
+        //    //目录为空，删除目录
+        //    DirectoryInfo directoryInfo = new DirectoryInfo(path);
+        //    //如果有子目录，先循环删除子目录，再删除当前目录
+        //    //directoryInfo.Delete(true);
+        //    Directory.DeleteDirectory(path);
+        //}
+        public static void DeleteDirectory(string target_dir)
         {
-            //目录为空，删除目录
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            //如果有子目录，先循环删除子目录，再删除当前目录
-            directoryInfo.Delete(true);
+            string[] files = Directory.GetFiles(target_dir);
+            string[] dirs = Directory.GetDirectories(target_dir);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteDirectory(dir);
+            }
+
+            Directory.Delete(target_dir, false);
         }
         /// <summary>
         /// 移动文件夹中的所有文件夹与文件到另一个文件夹

@@ -60,6 +60,9 @@ namespace HBNiuBi
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
+            this.button17 = new System.Windows.Forms.Button();
+            this.button18 = new System.Windows.Forms.Button();
+            this.button19 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -98,7 +101,6 @@ namespace HBNiuBi
             this.restoreSerialNumberField.Name = "restoreSerialNumberField";
             this.restoreSerialNumberField.Size = new System.Drawing.Size(252, 23);
             this.restoreSerialNumberField.TabIndex = 3;
-            this.restoreSerialNumberField.Text = "CN-2202-2829-3613";
             // 
             // restoreRestoreCodeField
             // 
@@ -106,7 +108,6 @@ namespace HBNiuBi
             this.restoreRestoreCodeField.Name = "restoreRestoreCodeField";
             this.restoreRestoreCodeField.Size = new System.Drawing.Size(252, 23);
             this.restoreRestoreCodeField.TabIndex = 4;
-            this.restoreRestoreCodeField.Text = "3RPQW5KABC";
             // 
             // label1
             // 
@@ -270,7 +271,6 @@ namespace HBNiuBi
             this.txtEmailNumber.Name = "txtEmailNumber";
             this.txtEmailNumber.Size = new System.Drawing.Size(252, 23);
             this.txtEmailNumber.TabIndex = 21;
-            this.txtEmailNumber.Text = "13337705593";
             // 
             // label7
             // 
@@ -287,7 +287,6 @@ namespace HBNiuBi
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(252, 23);
             this.txtPassword.TabIndex = 23;
-            this.txtPassword.Text = "han1234567890-=";
             // 
             // button12
             // 
@@ -310,7 +309,7 @@ namespace HBNiuBi
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(530, 683);
+            this.button13.Location = new System.Drawing.Point(412, 683);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(103, 45);
             this.button13.TabIndex = 27;
@@ -320,7 +319,7 @@ namespace HBNiuBi
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(671, 683);
+            this.button14.Location = new System.Drawing.Point(623, 598);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(103, 45);
             this.button14.TabIndex = 28;
@@ -348,11 +347,43 @@ namespace HBNiuBi
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
-            // MainForm
+            // button17
+            // 
+            this.button17.Location = new System.Drawing.Point(566, 683);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(103, 45);
+            this.button17.TabIndex = 31;
+            this.button17.Text = "开始";
+            this.button17.UseVisualStyleBackColor = true;
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(823, 683);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(126, 45);
+            this.button18.TabIndex = 32;
+            this.button18.Text = "关闭OK";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
+            // button19
+            // 
+            this.button19.Location = new System.Drawing.Point(1187, 731);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(103, 45);
+            this.button19.TabIndex = 33;
+            this.button19.Text = "开始";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click);
+            // 
+            // TestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1487, 805);
+            this.Controls.Add(this.button19);
+            this.Controls.Add(this.button18);
+            this.Controls.Add(this.button17);
             this.Controls.Add(this.button16);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
@@ -384,7 +415,7 @@ namespace HBNiuBi
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Name = "MainForm";
+            this.Name = "TestForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
@@ -425,6 +456,9 @@ namespace HBNiuBi
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Button button18;
+        private System.Windows.Forms.Button button19;
     }
 }
 

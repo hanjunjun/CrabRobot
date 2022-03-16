@@ -20,7 +20,7 @@ namespace HBNiuBi.Util
 
         private static Task writeTask = default;
 
-        //static ManualResetEvent pause = new ManualResetEvent(false);//开始是无信号的
+        static ManualResetEvent pause = new ManualResetEvent(false);//开始是无信号的
 
         static Logger()
         {
@@ -31,8 +31,8 @@ namespace HBNiuBi.Util
                 {
                     try
                     {
-                        //pause.WaitOne();//等待信号到来
-                        //pause.Reset();//设置无信号
+                        pause.WaitOne();//等待信号到来
+                        pause.Reset();//设置无信号
                         List<string[]> temp = new List<string[]>();
                         foreach (var logItem in logQueue)
                         {
@@ -75,7 +75,7 @@ namespace HBNiuBi.Util
         public static string GetStackTrace()
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrame(3);//1代表上级，2代表上上级，以此类推
+            StackFrame frame = trace.GetFrame(4);//1代表上级，2代表上上级，以此类推
             var codeLineNumb = frame.GetFileLineNumber();
             MethodBase method = frame.GetMethod();
             var nameSpace = method.ReflectedType.FullName;
@@ -88,9 +88,9 @@ namespace HBNiuBi.Util
         /// <param name="logContent">日志内容</param>
         /// <param name="logDir">指定日志存储路径</param>
         /// <param name="isShowConsoleLog">是否在控制台显示日志</param>
-        public static void Info(string logContent, string[] logDir = null, bool isShowConsoleLog = true, bool isShowMiniProfiler = true, ConsoleColor consoleColor = ConsoleColor.Black)
+        public static void Info(string logContent, string[] logDir = null)
         {
-            WriteProfilerLog(logContent, "Info", isShowConsoleLog, logDir, isShowMiniProfiler, consoleColor);
+            WriteProfilerLog(logContent, "Info", logDir);
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace HBNiuBi.Util
         /// <param name="logContent">日志内容</param>
         /// <param name="logDir">指定日志存储路径</param>
         /// <param name="isShowConsoleLog">是否在控制台显示日志</param>
-        public static void Debug(string logContent, string[] logDir = null, bool isShowConsoleLog = true, bool isShowMiniProfiler = true, ConsoleColor consoleColor = ConsoleColor.Black)
+        public static void Debug(string logContent, string[] logDir = null)
         {
-            WriteProfilerLog(logContent, "Debug", isShowConsoleLog, logDir, isShowMiniProfiler, consoleColor);
+            WriteProfilerLog(logContent, "Debug", logDir);
         }
 
         /// <summary>
@@ -110,11 +110,19 @@ namespace HBNiuBi.Util
         /// <param name="logContent">日志内容</param>
         /// <param name="logDir">指定日志存储路径</param>
         /// <param name="isShowConsoleLog">是否在控制台显示日志</param>
-        public static void Error(string logContent, string[] logDir = null, bool isShowConsoleLog = true, bool isShowMiniProfiler = true, ConsoleColor consoleColor = ConsoleColor.Black)
+        public static void Error(string logContent, string[] logDir = null)
         {
-            WriteProfilerLog(logContent, "Error", isShowConsoleLog, logDir, isShowMiniProfiler, consoleColor);
+            WriteProfilerLog(logContent, "Error", logDir);
         }
 
+        public static void Warning(string logContent, string[] logDir = null)
+        {
+            WriteProfilerLog(logContent, "Warning", logDir);
+        }
+        public static void Success(string logContent, string[] logDir = null)
+        {
+            WriteProfilerLog(logContent, "Success", logDir);
+        }
         /// <summary>
         /// 1.多线程+信号量+队列写本地日志
         /// 2.日志调试入口
@@ -123,48 +131,17 @@ namespace HBNiuBi.Util
         /// <param name="logContent">日志内容</param>
         /// <param name="isError">是否报错</param>
         /// <param name="errorTitle">错误标题</param>
-        private static void WriteProfilerLog(string logContent, string logLevel, bool isShowConsoleLog, string[] logDir, bool isShowMiniProfiler, ConsoleColor consoleColor)
+        private static void WriteProfilerLog(string logContent, string logLevel, string[] logDir)
         {
-            var now = DateTime.Now.ToString("HH:mm:ss:fff");
-            //日志目录
-            var requestId = string.Empty;
-            var pathItem = new string[0];
             if (logDir == null)
             {
-
+                logDir = new string[] { "系统" };
             }
-            else
-            {
-                pathItem = logDir;
-            }
-            //日志级别颜色
-            //ConsoleColor consoleColor;
-            //输出内容
-            var consoleLog = logContent;
+            var now = DateTime.Now.ToString("HH:mm:ss:fff");
             //日志内容
-            logContent =
-            $"{now}|{logLevel}{(string.IsNullOrEmpty(requestId) ? "" : $@"|{requestId}")}|{GetStackTrace()}|{logContent}";
-            if (consoleColor == ConsoleColor.Black)
-            {
-                if (logLevel.Equals("Error"))
-                {
-                    consoleColor = ConsoleColor.Red;
-
-                }
-                else if (logLevel.Equals("Debug"))
-                {
-                    consoleColor = ConsoleColor.Blue;
-                }
-                else
-                {
-                    consoleColor = ConsoleColor.DarkYellow;
-                }
-            }
-            else
-            {
-            }
-
-            WriteLog(pathItem, logContent);
+            logContent = $"{now}|{logLevel}|{GetStackTrace()}|{logContent}";
+            WriteLog(logDir, logContent);
+            pause.Set();
         }
 
         private static void WriteLog(string[] customDirectory, string infoData)
@@ -215,7 +192,7 @@ namespace HBNiuBi.Util
             string newFilePath = string.Empty;
             string logDir = string.Empty;
             var list = customDirectory.ToList();
-            var logPath = AppDomain.CurrentDomain.BaseDirectory + @"Log\";
+            var logPath = AppDomain.CurrentDomain.BaseDirectory + @"Logs\";
             foreach (var item in list)
             {
                 logPath += item + @"\";

@@ -19,11 +19,11 @@ namespace HBNiuBi
 {
     public partial class TestForm : Form
     {
-        const string path = @"C:\HanJunJun\GitHub\HBNiuBi\dist\Debug\Resources\";
+         string path = AppDomain.CurrentDomain.BaseDirectory+@"Resources";
         const string displayModel = "dx.graphic.3d.10plus";
         const string keyboardModel = "dx.public.anti.api";
         const string mouseModel = "dx.mouse.position.lock.api";
-        dmsoft dm;
+        Dmsoft dm;
         public TestForm()
         {
             InitializeComponent();
@@ -36,9 +36,8 @@ namespace HBNiuBi
 
         private void button1_Click(object sender, EventArgs e)
         {
-            dm = new dmsoft();
+            dm = new Dmsoft();
             dm.SetShowErrorMsg(0);
-            long s = dm.Reg("cx100115963871588f42fe33632fc733792e2ad125d", "kqOtu");
             var result = dm.DmGuard(1, "memory2");
             result = dm.DmGuard(1, "hm 0 1");
             var path = AppDomain.CurrentDomain.BaseDirectory + Process.GetCurrentProcess().ProcessName + ".exe";
@@ -227,14 +226,15 @@ namespace HBNiuBi
         }
         [DllImport("user32", EntryPoint = "GetWindowThreadProcessId")]
         private static extern int GetWindowThreadProcessId(IntPtr hwnd, out int pid);
-        int hwnd = -1;
+
         private void button13_Click(object sender, EventArgs e)
         {
+            int hwnd = -1;
             Task.Factory.StartNew(() =>
             {
                 //启动游戏
                 var process = System.Diagnostics.Process.Start(wowGamePath.Text);
-                Thread.Sleep(5000); 
+                Thread.Sleep(5000);
                 txtPid.SetTextBox(() =>
                 {
                     txtPid.Text = process.Id.ToString();
@@ -596,6 +596,79 @@ namespace HBNiuBi
                 }
             }).Wait();
 
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            //var hwnd = -1;
+            //var result = -1;
+            //dm.SetPath(path);
+            //hwnd = dm.FindWindowByProcess("Wow.exe", "", "魔兽世界");
+            //Debug.WriteLine($"wow hwnd:{hwnd}");
+            //var dmbind = dm.BindWindowEx(hwnd, "gdi", "dx.mouse.position.lock.api", "dx.keypad.raw.input", "", 0);
+            //Task.Factory.StartNew(() =>
+            //{
+            //    var i = 0;
+            //    while (true)
+            //    {
+            //        if (i >= 10)
+            //        {
+            //            Debug.WriteLine("没有找到显卡兼容弹窗！");
+            //            return;
+            //        }
+            //        var fdsuiji = dm.FindPic(0, 0, 2000, 2000, "login0.bmp", "000000", 0.4, 0, out shopX, out shopY);
+            //        if (fdsuiji != -1)
+            //        {
+            //            //dm.MoveTo(shopX + 2, shopY + 2);
+            //            //dm.LeftDoubleClick();
+            //            //var dmbind = dm.BindWindowEx(hwnd, "gdi2", "normal", keyboardModel, "", 0);
+            //            int childHwnd = FindWindowEx(hwnd, 0, null, "OK");//按钮控件标题
+            //            SendMessage(childHwnd, BM_CLICK, 0, 0);
+            //            return;
+            //        }
+            //        i++;
+            //        Thread.Sleep(1000);
+            //    }
+            //    //Thread.Sleep(5000);
+            //    //SendMessage(hwnd, WM_CLOSE, 0, 0);
+            //    //Thread.Sleep(5000);
+            //}).Wait();
+
+
+            //var process = System.Diagnostics.Process.Start(wowGamePath.Text);
+            //Thread.Sleep(8000);
+            //var hwnd = dm.FindWindowByProcessId(process.Id,"", "魔兽世界");
+            dm.SetPath(path);
+            var hwnd = dm.FindWindowByProcess("Wow.exe", "", "魔兽世界");
+            var dmbind = dm.BindWindowEx(hwnd, "gdi", "dx.mouse.position.lock.api", "dx.keypad.raw.input", "", 0);
+            //var dmbind = dm.BindWindowEx(hwnd, "gdi", mouseModel, keyboardModel, "", 0);
+            var i = 0;
+            while (true)
+            {
+                if (i >= 10)
+                {
+                    Debug.WriteLine("没有找到显卡兼容弹窗！");
+                    throw new Exception("没有找到显卡兼容弹窗！");
+                }
+                var fdsuiji = dm.FindPic(0, 0, 2000, 2000, "login0.bmp", "000000", 0.4, 0, out var x, out var y);
+                if (fdsuiji == 0)
+                {
+                    int childHwnd = FindWindowEx(hwnd, 0, null, "OK");//按钮控件标题
+                    SendMessage(childHwnd, BM_CLICK, 0, 0);
+                    break;
+                }
+                i++;
+                Thread.Sleep(1000);
+            }
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            dm.SetPath(path);
+            var hwnd = dm.FindWindowByProcessId(14736, "", "魔兽世界");
+            var dmbind = dm.BindWindowEx(hwnd, displayModel, "dx.mouse.input.lock.api3", keyboardModel, "", 0);
+            var fdsuiji = dm.FindPic(0, 0, 2000, 2000, "yaosai.bmp", "000000", 0.4, 2, out shopX, out shopY);
+            var s = dm.Ocr(0, 0, 2000, 2000, "9f2e3f-000000", 1.0);
         }
 
         private void button5_Click(object sender, EventArgs e)

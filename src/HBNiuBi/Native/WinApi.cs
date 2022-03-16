@@ -25,6 +25,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 
 namespace HBNiuBi.Native
 {
@@ -474,6 +475,15 @@ namespace HBNiuBi.Native
         #endregion
 
         #region API Calls
+        [DllImport("Kernel32.dll")]
+        public static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
+        [DllImport("user32.dll ", SetLastError = true)]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+        [DllImport("user32.dll", EntryPoint = "FindWindowEx")]
+        public extern static int FindWindowEx(int hwndParent, int hwndChildAfter, string lpszClass, string lpszWindow);
+        public const int BM_CLICK = 0xF5;//点击
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern Bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, IntPtr hdcSrc, ref POINT pprSrc, int crKey, ref BLENDFUNCTION pblend, int dwFlags);
@@ -518,7 +528,7 @@ namespace HBNiuBi.Native
         public static extern IntPtr SetCapture(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        public static extern int SendMessage(int hWnd, int Msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr wnd, int msg, bool param, int lparam);

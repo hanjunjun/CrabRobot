@@ -20,6 +20,16 @@ namespace HBNiuBi.Util
                 action();
             }
         }
-
+        public static void InvokeDataGridView(this DataGridView dataGridView, Action action)
+        {
+            if (dataGridView.InvokeRequired)
+            {
+                dataGridView.Invoke(action);
+            }
+            else
+            {
+                action();
+            }
+        }
     }
 }

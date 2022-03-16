@@ -1,0 +1,44 @@
+首先解释一下,不注册调用大漠插件，实际上是使用dmreg.dll来配合实现,这个文件有2个导出接口
+SetDllPathW和SetDllPathA。 SetDllPathW对应unicode，SetDllPathA对应ascii接口.
+
+参数如下
+SetDllPathA  字符串(Ascii码表示插件所在的路径),整数(0表示STA，1表示MTA)
+SetDllPathW  字符串(Unicode码表示插件所在的路径),整数(0表示STA，1表示MTA)
+
+那么这2个函数就可以代替以往我们使用的 regsvr32注册方式，或者RegDll注册方式。
+
+下面分别介绍下各个平台的使用方法,需要注意的是,这个dll仅仅给3.1235之后的版本使用，之前的版本无效.
+1. 按键平台(按键8及以上)
+
+代码如下(其实就是代替以往我们的注册插件语句 RegDll或者regsvr32语句)
+PutAttachment "c:\test_game","dm.dll"
+PutAttachment ".\plugin","dmreg.dll"
+Public Declare Function SetDllPathW Lib ".\plugin\dmreg.dll" Alias "SetDllPathW" (ByVal path As String, ByVal mode As Long) As Long
+
+TracePrint SetDllPathW("c:\test_game\dm.dll", 0) 
+
+// 下面就可以正常创建对象使用插件了
+set dm = createobject("dm.dmsoft")
+
+
+2. E语言平台
+首先在DLL命令自定义表里增加一个DLL函数导入接口,比如
+.版本 2
+
+.DLL命令 SetDllPathA, , "c:\test_game\dmreg.dll", "SetDllPathA"
+    .参数 path, 文本型
+    .参数 mode, 整数型
+
+然后在使用插件之前,调用这个接口
+.版本 2
+
+SetDllPathA (“c:\test_game\dm.dll”, 0)
+
+dm.创建 (“dm.dmsoft”, )
+信息框 (dm.文本方法 (“ver”, ), 0, )
+
+3. 其他平台，都类似，就不多说了。 
+比如vc 
+LoadLibrary 然后调用SetDllPathA或者SetDllPathW都可以
+
+

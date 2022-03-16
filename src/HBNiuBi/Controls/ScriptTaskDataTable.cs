@@ -1,4 +1,5 @@
 ﻿using HBNiuBi.Model;
+using HBNiuBi.ScriptTask;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -180,12 +181,12 @@ namespace HBNiuBi.Controls
         }
         public class DoubleClickEventArgs : EventArgs
         {
-            public ScriptModel ScriptModel;
+            public ScriptTaskManager ScriptModel;
 
             /// <summary>
             /// Default constructor
             /// </summary>
-            public DoubleClickEventArgs(ScriptModel scriptModel)
+            public DoubleClickEventArgs(ScriptTaskManager scriptModel)
                 : base()
             {
                 this.ScriptModel = scriptModel;
@@ -196,13 +197,8 @@ namespace HBNiuBi.Controls
         protected override void OnCellDoubleClick(DataGridViewCellEventArgs e)
         {
             base.OnCellDoubleClick(e);
-            if (ScriptContainer.ScriptTaskContainer.ContainsKey(this.CurrentRow.Tag?.ToString()))
-            {
-                if (ScriptContainer.ScriptTaskContainer.TryGetValue(this.CurrentRow.Tag?.ToString(), out var scriptModel))
-                {
-                    DoubleClick(this, new DoubleClickEventArgs(scriptModel),e);
-                }
-            }
+            var scriptTaskManager = ScriptTaskSchedulerExecutor.GetInstance().GetScriptTaskManagerById(this.CurrentRow.Tag?.ToString());
+            DoubleClick(this, new DoubleClickEventArgs(scriptTaskManager), e);
         }
 
         protected override void OnCellPainting(DataGridViewCellPaintingEventArgs e)
