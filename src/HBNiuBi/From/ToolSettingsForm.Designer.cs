@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ToolSettingsForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ckbDebug = new System.Windows.Forms.CheckBox();
             this.txtDmVer = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtDmCode = new System.Windows.Forms.TextBox();
@@ -60,7 +62,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.txtMailPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.ckbDebug = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -79,6 +80,16 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "DM组件设置";
+            // 
+            // ckbDebug
+            // 
+            this.ckbDebug.AutoSize = true;
+            this.ckbDebug.Location = new System.Drawing.Point(140, 96);
+            this.ckbDebug.Name = "ckbDebug";
+            this.ckbDebug.Size = new System.Drawing.Size(123, 21);
+            this.ckbDebug.TabIndex = 14;
+            this.ckbDebug.Text = "是否启用调试模式";
+            this.ckbDebug.UseVisualStyleBackColor = true;
             // 
             // txtDmVer
             // 
@@ -403,16 +414,6 @@
             this.label4.TabIndex = 8;
             this.label4.Text = "密码：";
             // 
-            // ckbDebug
-            // 
-            this.ckbDebug.AutoSize = true;
-            this.ckbDebug.Location = new System.Drawing.Point(140, 96);
-            this.ckbDebug.Name = "ckbDebug";
-            this.ckbDebug.Size = new System.Drawing.Size(123, 21);
-            this.ckbDebug.TabIndex = 14;
-            this.ckbDebug.Text = "是否启用调试模式";
-            this.ckbDebug.UseVisualStyleBackColor = true;
-            // 
             // ToolSettingsForm
             // 
             this.AcceptButton = this.button1;
@@ -425,7 +426,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
-            this.HelpButton = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ToolSettingsForm";
             this.Text = "DM配置-重启生效";
             this.groupBox1.ResumeLayout(false);

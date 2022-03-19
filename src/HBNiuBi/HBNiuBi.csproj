@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>x86</Platforms>
     <ApplicationIcon>carb.ico</ApplicationIcon>
@@ -23,8 +23,11 @@
 
   <ItemGroup>
     <Compile Remove="Plugin\**" />
+    <Compile Remove="Video\AForge.NET Framework-2.2.5\**" />
     <EmbeddedResource Remove="Plugin\**" />
+    <EmbeddedResource Remove="Video\AForge.NET Framework-2.2.5\**" />
     <None Remove="Plugin\**" />
+    <None Remove="Video\AForge.NET Framework-2.2.5\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -175,6 +178,9 @@
     <None Update="Resources\zhanghaoshurujiemiantuichu.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\ziku.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\保存.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -244,7 +250,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="(RoboCopy &quot;$(ProjectDir)Video\lib&quot; &quot;$(SolutionDir)../dist\$(Configuration)&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;(RoboCopy &quot;$(ProjectDir)DM\lib&quot; &quot;$(SolutionDir)../dist\$(Configuration)&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;(RoboCopy &quot;$(ProjectDir)DM\lib&quot; &quot;$(SolutionDir)../dist\Build&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;exit 0" />
+    <Exec Command="(RoboCopy &quot;$(ProjectDir)Video\lib&quot; &quot;$(SolutionDir)../dist\$(Configuration)&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;(RoboCopy &quot;$(ProjectDir)Video\lib&quot; &quot;$(SolutionDir)../dist\Build&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;(RoboCopy &quot;$(ProjectDir)DM\lib&quot; &quot;$(SolutionDir)../dist\$(Configuration)&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;(RoboCopy &quot;$(ProjectDir)DM\lib&quot; &quot;$(SolutionDir)../dist\Build&quot; /e) ^&amp; IF %25ERRORLEVEL%25 GEQ 8 exit 1&#xD;&#xA;exit 0" />
   </Target>
 
 </Project>

@@ -20,6 +20,7 @@ namespace HBNiuBi
     public partial class TestForm : Form
     {
          string path = AppDomain.CurrentDomain.BaseDirectory+@"Resources";
+         string zikupath = AppDomain.CurrentDomain.BaseDirectory+@"Resources\ziku.txt";
         const string displayModel = "dx.graphic.3d.10plus";
         const string keyboardModel = "dx.public.anti.api";
         const string mouseModel = "dx.mouse.position.lock.api";
@@ -86,6 +87,7 @@ namespace HBNiuBi
         {
             var result = -1;
             dm.SetPath(path);
+            dm.SetDict(0, zikupath);
             var hwnd = dm.FindWindow("", "魔兽世界");
             var dmbind = dm.BindWindowEx(hwnd, "dx2", "dx.mouse.input.lock.api3", keyboardModel, "", 0);
             Task.Factory.StartNew(() =>
@@ -669,6 +671,14 @@ namespace HBNiuBi
             var dmbind = dm.BindWindowEx(hwnd, displayModel, "dx.mouse.input.lock.api3", keyboardModel, "", 0);
             var fdsuiji = dm.FindPic(0, 0, 2000, 2000, "yaosai.bmp", "000000", 0.4, 2, out shopX, out shopY);
             var s = dm.Ocr(0, 0, 2000, 2000, "9f2e3f-000000", 1.0);
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            var result = -1;
+            dm.SetPath(path);
+            var hwnd = dm.FindWindowByProcessId(18756,"", "魔兽世界");
+            var s = dm.Ocr(354, 673, 360, 703, "f1c600-937703", 1.0);
         }
 
         private void button5_Click(object sender, EventArgs e)

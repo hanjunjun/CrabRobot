@@ -145,6 +145,11 @@ namespace HBNiuBi.ScriptTask
             model.Height = scriptItemModel.Height;
             model.NvidiaShow = scriptItemModel.NvidiaShow;
             model.SubAccount = scriptItemModel.SubAccount;
+            model.GameDownLine = scriptItemModel.GameDownLine;
+            model.YaosaiOutLine = scriptItemModel.YaosaiOutLine;
+            model.MaxRetryLoginCount = scriptItemModel.MaxRetryLoginCount;
+            model.WaitTimeMinute = scriptItemModel.WaitTimeMinute;
+            model.StartTime = scriptItemModel.StartTime;
             configManager.AddConfig(model);
         }
         /// <summary>
@@ -218,6 +223,11 @@ namespace HBNiuBi.ScriptTask
             model.Height = scriptItemModel.Height;
             model.NvidiaShow = scriptItemModel.NvidiaShow;
             model.SubAccount = scriptItemModel.SubAccount;
+            model.GameDownLine = scriptItemModel.GameDownLine;
+            model.YaosaiOutLine = scriptItemModel.YaosaiOutLine;
+            model.MaxRetryLoginCount = scriptItemModel.MaxRetryLoginCount;
+            model.WaitTimeMinute = scriptItemModel.WaitTimeMinute;
+            model.StartTime = scriptItemModel.StartTime;
             configManager.UpdateConfig(model.ScriptId, model);
         }
     }

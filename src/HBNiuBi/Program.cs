@@ -27,7 +27,7 @@ namespace HBNiuBi
             //多线程异常
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            ////录像服务子进程
+            //Thread.Sleep(15000);
             //BootstrapService service = new BootstrapService();
             //service.ScreenVideoService();
             //Console.WriteLine("录像服务已启动！");

@@ -23,6 +23,7 @@ namespace HBNiuBi.From
         }
         public ScriptAddOrEditForm(bool isEdit = false, ScriptConfig script = null) : this()
         {
+            this.dtpStartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.scriptItemModel = script;
             if (isEdit)
             {
@@ -44,6 +45,7 @@ namespace HBNiuBi.From
                 this.txtYaosaiOutLine.Text = this.scriptItemModel.YaosaiOutLine.ToString();
                 this.txtMaxRetryLoginCount.Text = this.scriptItemModel.MaxRetryLoginCount.ToString();
                 this.txtWaitTimeMinute.Text = this.scriptItemModel.WaitTimeMinute.ToString();
+                this.dtpStartTime.Value=this.scriptItemModel.StartTime;
             }
             else
             {
@@ -66,6 +68,7 @@ namespace HBNiuBi.From
                 this.txtYaosaiOutLine.Text = this.scriptItemModel.YaosaiOutLine.ToString();
                 this.txtMaxRetryLoginCount.Text = this.scriptItemModel.MaxRetryLoginCount.ToString();
                 this.txtWaitTimeMinute.Text = this.scriptItemModel.WaitTimeMinute.ToString();
+                this.dtpStartTime.Value = this.scriptItemModel.StartTime;
             }
         }
 
@@ -88,6 +91,7 @@ namespace HBNiuBi.From
             this.scriptItemModel.YaosaiOutLine = Convert.ToInt32(this.txtYaosaiOutLine.Text);
             this.scriptItemModel.MaxRetryLoginCount = Convert.ToInt32(this.txtMaxRetryLoginCount.Text);
             this.scriptItemModel.WaitTimeMinute = Convert.ToInt32(this.txtWaitTimeMinute.Text);
+            this.scriptItemModel.StartTime = this.dtpStartTime.Value;
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
 

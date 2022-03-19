@@ -28,6 +28,7 @@ namespace HBNiuBi.Model
         /// 工具的资源目录
         /// </summary>
         public string MyAppResourcesPath { get; set; } = AppDomain.CurrentDomain.BaseDirectory + @"Resources\";
+        public string ZikuPath { get; set; } = AppDomain.CurrentDomain.BaseDirectory + @"Resources\ziku.txt";
         /// <summary>
         /// 角色是否在线
         /// </summary>

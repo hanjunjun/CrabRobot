@@ -126,8 +126,11 @@ namespace HBNiuBi.ScriptTask
         /// 最大登录重试次数
         /// </summary>
         //private int maxRetryLoginCount = 15;
+        private TimeSleepSchedulerExecutor timeSleepSchedulerExecutor;
         public ScriptTaskManager(ScriptItemModel scriptItemModel)
         {
+            //初始化定时器调度器
+            timeSleepSchedulerExecutor = new TimeSleepSchedulerExecutor();
             SubAccounts = new Dictionary<string, string>();
             SubAccounts.Add("WOW1", "wow1.bmp");
             SubAccounts.Add("WOW2", "wow2.bmp");
@@ -182,6 +185,7 @@ namespace HBNiuBi.ScriptTask
             DM.SetShowErrorMsg(0);
             //全局资源路径
             DM.SetPath(scriptItemModel.MyAppResourcesPath);
+            DM.SetDict(0, scriptItemModel.ZikuPath);
             //全局字库配置
             DM.EnableShareDict(1);
             //启动游戏进程，更新pid和hwnd
@@ -216,6 +220,7 @@ namespace HBNiuBi.ScriptTask
             registerWowDynamicCodeTask = new Task((obj) =>
             {
                 Log("注册码刷新任务");
+                var time = timeSleepSchedulerExecutor.GenTimeSleep();
                 while (true)
                 {
                     if (destroy) return;
@@ -238,8 +243,7 @@ namespace HBNiuBi.ScriptTask
                     }
                     finally
                     {
-                        Thread.Sleep(10 * 1000);
-
+                        time.Sleep(10 * 1000);
                     }
                 }
             }, null
@@ -252,6 +256,7 @@ namespace HBNiuBi.ScriptTask
         {
             RegisterGameStateTask = new Task((obj) =>
             {
+                var time = timeSleepSchedulerExecutor.GenTimeSleep();
                 while (true)
                 {
                     if (destroy) return;
@@ -275,8 +280,8 @@ namespace HBNiuBi.ScriptTask
                     {
                         Log($"游戏状态检测任务出错：{ex.Message}");
                     }
-                    complete:
-                    Thread.Sleep(10 * 1000);
+                complete:
+                    time.Sleep(10 * 1000);
                 }
             }, null
             , TaskCreationOptions.LongRunning);
@@ -288,6 +293,7 @@ namespace HBNiuBi.ScriptTask
         {
             RegisterMonitorGameDieTask = new Task((obj) =>
             {
+                var time = timeSleepSchedulerExecutor.GenTimeSleep();
                 while (true)
                 {
                     if (destroy) return;
@@ -312,7 +318,7 @@ namespace HBNiuBi.ScriptTask
                             this.pid = 0;
                             this.hwnd = 0;
                             //等待一段时间，不然容易被验证码
-                            Thread.Sleep(scriptItemModel.WaitTimeMinute* 60 * 1000);
+                            time.Sleep(scriptItemModel.WaitTimeMinute * 60 * 1000);
                         }
                         if (this.pid == 0)
                         {
@@ -324,14 +330,14 @@ namespace HBNiuBi.ScriptTask
                             //启动游戏
                             GameProcessStart();
                             //登录角色
-                            GameLogin();
+                            GameLogin(time);
                             continue;
                         }
                         var processList = Process.GetProcesses();
                         var exist = processList.Any(x => x.Id == this.pid);
                         hwnd = DM.FindWindowByProcessId(this.pid, "", "魔兽世界");
                         Log($"进程pid={pid}hwnd={hwnd}");
-                        if (this.pid != 0 || exist && hwnd != 0)
+                        if (this.pid != 0 && exist && hwnd != 0)
                         {
                             Log($"检测到游戏进程存活pid={pid}hwnd={hwnd}");
                             //进程存活
@@ -340,6 +346,7 @@ namespace HBNiuBi.ScriptTask
                             var online = DM.FindPic(0, 0, 2000, 2000, "wenhao.bmp", "000000", 0.7, 3, out var x, out var y);
                             if (online != -1)
                             {
+                                gameDown = 0;
                                 //重置重新登录计数
                                 retryLoginCount = 0;
                                 //游戏在线
@@ -350,7 +357,6 @@ namespace HBNiuBi.ScriptTask
                                 if (FirstStartSuccess && !scriptItemModel.GameOnline)
                                 {
                                     Log($"掉线恢复");
-                                    gameDown = 0;
                                     WarnScanSchedulerExecutor.GetInstance().ReportWarn(new WarnReportModel
                                     {
                                         MailSubject = $"【{scriptItemModel.ScriptName}】【掉线恢复】通知",
@@ -361,7 +367,14 @@ namespace HBNiuBi.ScriptTask
                                 //判断是否在要塞
                                 online = DM.FindPic(0, 0, 2000, 2000, "yaosai.bmp", "000000", 0.6, Const.DM.图像查找方向.从右到左_从上到下, out x, out y);
                                 var onlinePvp = DM.FindPic(0, 0, 2000, 2000, "yaosaipvp.bmp", "000000", 0.6, Const.DM.图像查找方向.从左到右_从上到下, out x, out y);
-                                if (online == 0 || onlinePvp == 0)
+                                //识别文字
+                                DM.SetDict(0, scriptItemModel.ZikuPath);
+                                hwnd = DM.FindWindowByProcessId(this.pid, "", "魔兽世界");
+                                var dmbind = DM.BindWindowEx(hwnd, displayModel, "dx.mouse.input.lock.api3", keyboardModel, "", 0);
+                                var sss = DM.Capture(1159, 3, 1188, 17, @$"{AppDomain.CurrentDomain.BaseDirectory}Resources\shibiezi.bmp");
+                                var str = DM.Ocr(0, 0, 2000, 2000, "fed000-937703", 0.7);
+                                Log($"要塞文字识别：{str}");
+                                if (online == 0 || onlinePvp == 0 || (str.Contains("要") || str.Contains("塞")))
                                 {
                                     yaosaiOut = 0;
                                     //在要塞
@@ -428,11 +441,11 @@ namespace HBNiuBi.ScriptTask
                                 if (fdsuiji == 0)
                                 {
                                     //重连按钮
-                                    GameDownRetryConnect();
+                                    GameDownRetryConnect(time);
                                     continue;
                                 }
                                 //登录角色
-                                GameLogin();
+                                GameLogin(time);
                             }
                         }
                         else
@@ -461,7 +474,7 @@ namespace HBNiuBi.ScriptTask
                             //启动游戏
                             GameProcessStart();
                             //登录角色
-                            GameLogin();
+                            GameLogin(time);
                         }
                     }
                     catch (Exception ex)
@@ -470,7 +483,7 @@ namespace HBNiuBi.ScriptTask
                     }
                     finally
                     {
-                        Thread.Sleep(5 * 1000);
+                        time.Sleep(5 * 1000);
                     }
                 }
             }, null
@@ -491,7 +504,7 @@ namespace HBNiuBi.ScriptTask
             DM.Capture(0, 0, scriptItemModel.Width, scriptItemModel.Height, iamgePath);
             return iamgePath;
         }
-        private void GameDownRetryConnect()
+        private void GameDownRetryConnect(TimeSleep time)
         {
             retryLoginCount++;
             int shopX = 0, shopY = 0;
@@ -499,11 +512,11 @@ namespace HBNiuBi.ScriptTask
             Log("检测到游戏掉线....");
             var move = DM.MoveTo(588, 343);
             var click = DM.LeftDoubleClick();
-            Thread.Sleep(1000);
+            time.Sleep(1000);
             move = DM.MoveTo(601, 386);
             click = DM.LeftDoubleClick();
             Log("正在操作重连中....");
-            Thread.Sleep(4000);
+            time.Sleep(4000);
             //判断有没有魔兽世界图标
             var fdsuiji = DM.FindPic(0, 0, 2000, 2000, "loginSelect.bmp", "000000", 0.7, 0, out shopX, out shopY);
             if (fdsuiji == -1)
@@ -537,7 +550,7 @@ namespace HBNiuBi.ScriptTask
         /// <summary>
         /// 登录角色
         /// </summary>
-        private void GameLogin()
+        private void GameLogin(TimeSleep time)
         {
             retryLoginCount++;
             //显卡兼容问题会弹窗
@@ -550,7 +563,7 @@ namespace HBNiuBi.ScriptTask
                 var move = DM.MoveTo(609, 344);
                 var click = DM.LeftDoubleClick();
                 Debug.WriteLine("退到首页准备重登....");
-                Thread.Sleep(500);
+                time.Sleep(500);
                 move = DM.MoveTo(601, 599);
                 click = DM.LeftDoubleClick();
                 goto inputAccount;
@@ -573,7 +586,7 @@ namespace HBNiuBi.ScriptTask
                     result = DM.FindWindowByProcessId(this.pid, "", "魔兽世界");
                     if (result == 0)
                     {
-                        Thread.Sleep(1000);
+                        time.Sleep(1000);
                         continue;
                     }
                     this.hwnd = result;
@@ -582,7 +595,7 @@ namespace HBNiuBi.ScriptTask
                     if (fdsuiji == 0)
                     {
                         Log("检测到显卡兼容OK按钮！");
-                        Thread.Sleep(3000);
+                        time.Sleep(3000);
                         DM.MoveTo(xx, yy);
                         DM.LeftDoubleClick();
                         Log("点击显卡OK按钮成功！");
@@ -590,12 +603,12 @@ namespace HBNiuBi.ScriptTask
                         //var clickResult = WinApi.SendMessage(childHwnd, WinApi.BM_CLICK, 0, 0);
                         //Log($"SendMessage={clickResult}");
 
-                        //Thread.Sleep(1000);
+                        //time.Sleep(1000);
                         //fdsuiji = DM.FindPic(0, 0, 2000, 2000, "login0.bmp", "000000", 0.8, 3, out xx, out yy);
                         //if (fdsuiji == 0)
                         //{
                         //    Log("检测到显卡兼容提示窗口还在！");
-                        //    Thread.Sleep(1000);
+                        //    time.Sleep(1000);
                         //    continue;
                         //}
                         break;
@@ -618,7 +631,7 @@ namespace HBNiuBi.ScriptTask
                 Log($"游戏主窗口hwnd={hwnd}");
                 if (hwnd == 0)
                 {
-                    Thread.Sleep(1000);
+                    time.Sleep(1000);
                     continue;
                 }
                 break;
@@ -628,17 +641,17 @@ namespace HBNiuBi.ScriptTask
             //移动窗口
             var results = DM.SetWindowSize(this.hwnd, this.scriptItemModel.Width, this.scriptItemModel.Height);
             Log($"SetWindowSize: width={this.scriptItemModel.Width} height={this.scriptItemModel.Height}");
-            Thread.Sleep(300);
+            time.Sleep(300);
             results = DM.MoveWindow(this.hwnd, this.scriptItemModel.X, this.scriptItemModel.Y);
             Log($"MoveWindow:{results}  x={this.scriptItemModel.X}  y={this.scriptItemModel.Y}");
-            Thread.Sleep(300);
-            inputAccount:
+            time.Sleep(300);
+        inputAccount:
             //点协议
             result = DM.MoveTo(623, 605);
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
-            Thread.Sleep(1000);
+            time.Sleep(1000);
             //输入账号密码等
             var email = scriptItemModel.Account;
             var password = scriptItemModel.Password;
@@ -647,10 +660,10 @@ namespace HBNiuBi.ScriptTask
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
-            Thread.Sleep(300);
+            time.Sleep(300);
             result = DM.SendString(this.hwnd, email);
             Log($"输入账号：{email}");
-            Thread.Sleep(300);
+            time.Sleep(300);
             //密码
             //result = DM.MoveTo(552, 349);
             result = DM.MoveTo(552, 413);
@@ -659,14 +672,14 @@ namespace HBNiuBi.ScriptTask
             Log($"LeftDoubleClick:{result}");
             result = DM.SendString(this.hwnd, password);
             Log($"输入账号：{password}");
-            Thread.Sleep(300);
+            time.Sleep(300);
             //确定
             result = DM.MoveTo(552, 497);
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
             Log($"确定");
-            Thread.Sleep(6000);
+            time.Sleep(6000);
             //输入动态码
             //获取动态码
             battleNetAuthenticator.Restore(this.scriptItemModel.SerialNumber, this.scriptItemModel.RestoreCode);
@@ -682,7 +695,7 @@ namespace HBNiuBi.ScriptTask
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
             Log($"输入动态码：{dynamicCode}");
-            Thread.Sleep(2000);
+            time.Sleep(2000);
             //选子账号
             var subAccount = SubAccounts[scriptItemModel.SubAccount];
             result = DM.FindPic(0, 0, 2000, 2000, subAccount, "000000", 0.6, 0, out var x, out var y);
@@ -698,13 +711,13 @@ namespace HBNiuBi.ScriptTask
                 //没找到
                 throw new Exception($"没找到{scriptItemModel.SubAccount}");
             }
-            Thread.Sleep(1000);
+            time.Sleep(1000);
             //同意
             result = DM.MoveTo(541, 442);
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
-            Thread.Sleep(3000);
+            time.Sleep(3000);
             //进入wow
             result = DM.KeyPressChar("enter");
             Log($"进入wow世界");
@@ -749,9 +762,12 @@ namespace HBNiuBi.ScriptTask
         {
             destroy = true;
             gameDiePause.Set();
+            timeSleepSchedulerExecutor.OverAll();
+            Task.WaitAll(registerWowDynamicCodeTask, RegisterExecuteScriptTask, RegisterMonitorGameDieTask, RegisterGameStateTask);
             registerWowDynamicCodeTask = null;
             RegisterExecuteScriptTask = null;
             RegisterMonitorGameDieTask = null;
+            RegisterGameStateTask = null;
             DM.ReleaseObj();
         }
     }

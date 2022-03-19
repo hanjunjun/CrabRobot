@@ -72,5 +72,9 @@ namespace HBNiuBi.Config
         /// 游戏子账号WOW1
         /// </summary>
         public string SubAccount { get; set; } = "WOW1";
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public DateTime StartTime { get; set; }= DateTime.Now;
     }
 }

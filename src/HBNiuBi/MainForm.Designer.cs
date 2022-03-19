@@ -51,7 +51,9 @@
             this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -73,7 +75,7 @@
             this.toolStripButton8});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1108, 35);
+            this.toolStrip1.Size = new System.Drawing.Size(1315, 35);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -166,10 +168,10 @@
             this.groupBox1.BackColor = System.Drawing.Color.Transparent;
             this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.groupBox1.Location = new System.Drawing.Point(652, 35);
+            this.groupBox1.Location = new System.Drawing.Point(859, 35);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.groupBox1.Size = new System.Drawing.Size(456, 410);
+            this.groupBox1.Size = new System.Drawing.Size(456, 427);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "日志";
@@ -180,7 +182,7 @@
             this.tabControl1.Location = new System.Drawing.Point(5, 21);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(446, 384);
+            this.tabControl1.Size = new System.Drawing.Size(446, 401);
             this.tabControl1.TabIndex = 0;
             // 
             // dataGridView1
@@ -205,7 +207,8 @@
             this.Column8,
             this.Column9,
             this.Column10,
-            this.Column1});
+            this.Column1,
+            this.Column2});
             this.dataGridView1.Content_Grid_color = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(233)))), ((int)(((byte)(216)))));
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
@@ -234,7 +237,7 @@
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Shifouhua_Sanjiao = true;
-            this.dataGridView1.Size = new System.Drawing.Size(652, 410);
+            this.dataGridView1.Size = new System.Drawing.Size(859, 427);
             this.dataGridView1.TabIndex = 2;
             // 
             // Column6
@@ -273,25 +276,43 @@
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
             // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "开始时间";
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.dataGridView1);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.toolStrip1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1110, 447);
+            this.panel1.Size = new System.Drawing.Size(1317, 464);
             this.panel1.TabIndex = 4;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(348, 236);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(116, 55);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1110, 447);
+            this.ClientSize = new System.Drawing.Size(1317, 464);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1126, 486);
             this.Name = "MainForm";
@@ -321,12 +342,14 @@
         private System.Windows.Forms.TabControl tabControl1;
         private Controls.ScriptTaskDataTable dataGridView1;
         private System.Windows.Forms.ToolStripButton toolStripButton8;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
     }
 }

@@ -75,7 +75,7 @@ namespace HBNiuBi.Util
         public static string GetStackTrace()
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrame(4);//1代表上级，2代表上上级，以此类推
+            StackFrame frame = trace.GetFrame(3);//1代表上级，2代表上上级，以此类推
             var codeLineNumb = frame.GetFileLineNumber();
             MethodBase method = frame.GetMethod();
             var nameSpace = method.ReflectedType.FullName;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptAddOrEditForm));
             this.label1 = new System.Windows.Forms.Label();
             this.txtScriptName = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -52,6 +53,11 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dtpStartTime = new System.Windows.Forms.DateTimePicker();
+            this.label17 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
+            this.txtWaitTimeMinute = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.txtMaxRetryLoginCount = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.txtYaosaiOutLine = new System.Windows.Forms.TextBox();
@@ -63,8 +69,6 @@
             this.label10 = new System.Windows.Forms.Label();
             this.txtHeight = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.txtWaitTimeMinute = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -267,7 +271,7 @@
             // 
             this.button1.Image = global::HBNiuBi.Properties.Resources.保存;
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(129, 822);
+            this.button1.Location = new System.Drawing.Point(128, 882);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 38);
             this.button1.TabIndex = 8;
@@ -280,7 +284,7 @@
             // 
             this.button2.Image = global::HBNiuBi.Properties.Resources.取消;
             this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button2.Location = new System.Drawing.Point(276, 822);
+            this.button2.Location = new System.Drawing.Point(275, 882);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(96, 38);
             this.button2.TabIndex = 9;
@@ -291,6 +295,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.dtpStartTime);
+            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.txtWaitTimeMinute);
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.txtMaxRetryLoginCount);
@@ -312,10 +319,53 @@
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Location = new System.Drawing.Point(12, 363);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(501, 433);
+            this.groupBox2.Size = new System.Drawing.Size(501, 497);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "游戏设置";
+            // 
+            // dtpStartTime
+            // 
+            this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpStartTime.Location = new System.Drawing.Point(145, 425);
+            this.dtpStartTime.Name = "dtpStartTime";
+            this.dtpStartTime.Size = new System.Drawing.Size(263, 23);
+            this.dtpStartTime.TabIndex = 34;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(71, 430);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(68, 17);
+            this.label17.TabIndex = 33;
+            this.label17.Text = "开始时间：";
+            // 
+            // button5
+            // 
+            this.button5.Font = new System.Drawing.Font("Microsoft YaHei UI", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button5.Image = global::HBNiuBi.Properties.Resources.打开文件夹x16;
+            this.button5.Location = new System.Drawing.Point(414, 21);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(38, 23);
+            this.button5.TabIndex = 32;
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // txtWaitTimeMinute
+            // 
+            this.txtWaitTimeMinute.Location = new System.Drawing.Point(187, 389);
+            this.txtWaitTimeMinute.Name = "txtWaitTimeMinute";
+            this.txtWaitTimeMinute.Size = new System.Drawing.Size(221, 23);
+            this.txtWaitTimeMinute.TabIndex = 31;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(17, 392);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(164, 17);
+            this.label16.TabIndex = 30;
+            this.label16.Text = "超过最大登录次数等待时间：";
             // 
             // txtMaxRetryLoginCount
             // 
@@ -407,34 +457,18 @@
             this.label11.TabIndex = 20;
             this.label11.Text = "高度：";
             // 
-            // txtWaitTimeMinute
-            // 
-            this.txtWaitTimeMinute.Location = new System.Drawing.Point(187, 389);
-            this.txtWaitTimeMinute.Name = "txtWaitTimeMinute";
-            this.txtWaitTimeMinute.Size = new System.Drawing.Size(221, 23);
-            this.txtWaitTimeMinute.TabIndex = 31;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(17, 392);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(164, 17);
-            this.label16.TabIndex = 30;
-            this.label16.Text = "超过最大登录次数等待时间：";
-            // 
             // ScriptAddOrEditForm
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(523, 872);
+            this.ClientSize = new System.Drawing.Size(523, 942);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
-            this.HelpButton = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ScriptAddOrEditForm";
             this.Text = "ScriptAddOrEditForm";
             this.groupBox1.ResumeLayout(false);
@@ -484,5 +518,8 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox txtWaitTimeMinute;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.DateTimePicker dtpStartTime;
+        private System.Windows.Forms.Label label17;
     }
 }

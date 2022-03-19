@@ -64,6 +64,7 @@ namespace HBNiuBi
 
             }
         }
+        int width = 0;
         private void InitDataGrid()
         {
             dataGridView1.InvokeDataGridView(() =>
@@ -83,36 +84,57 @@ namespace HBNiuBi
                 dataGridView1.Columns[3].HeaderCell.Style.ForeColor = Color.Blue;
                 dataGridView1.Columns[4].HeaderCell.Style.ForeColor = Color.Blue;
                 //单元格内容居中
+                var i = 0;
                 foreach (DataGridViewColumn item in this.dataGridView1.Columns)
                 {
                     item.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     item.SortMode = DataGridViewColumnSortMode.NotSortable;
                     //列标题右边有预留一个排序小箭头的位置，所以整个列标题就向左边多一点，
                     //而当把SortMode属性设置为NotSortable时，不使用排序，也就没有那个预留的位置，所有完全居中了
+                    this.dataGridView1.AutoResizeColumn(i, DataGridViewAutoSizeColumnMode.AllCells);
+                    //记录整个DataGridView的宽度
+                    width += this.dataGridView1.Columns[i].Width;
+                    i++;
                 }
+                //判断调整后的宽度与原来设定的宽度的关系，如果是调整后的宽度大于原来设定的宽度，
+                //则将DataGridView的列自动调整模式设置为显示的列即可，
+                //如果是小于原来设定的宽度，将模式改为填充。
+                if (width > this.dataGridView1.Size.Width)
+                {
+                    this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                }
+                else
+                {
+                    this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                }
+                //冻结某列 从左开始 0，1，2
+                dataGridView1.Columns[1].Frozen = true;
             });
         }
         private void DeleteGameCache(List<ScriptConfig> scriptConfigs)
         {
-            //foreach(var item in scriptConfigs)
-            //{
-            //    var path = Path.GetDirectoryName(item.GamePath);
-            //    var cachePath = path + @"\Cache";
-            //    if (Directory.Exists(cachePath))
-            //    {
-            //        FileUtil.DeleteDirectory(cachePath);
-            //    }
-            //    var errorPath = path + @"\Errors";
-            //    if (Directory.Exists(errorPath))
-            //    {
-            //        FileUtil.DeleteDirectory(errorPath);
-            //    }
-            //    var logsPath = path + @"\Logs";
-            //    if (Directory.Exists(logsPath))
-            //    {
-            //        FileUtil.DeleteDirectory(logsPath);
-            //    }
-            //}
+            if (Process.GetProcessesByName("Wow") == null)
+            {
+                foreach (var item in scriptConfigs)
+                {
+                    var path = Path.GetDirectoryName(item.GamePath);
+                    var cachePath = path + @"\Cache";
+                    if (Directory.Exists(cachePath))
+                    {
+                        FileUtil.DeleteDirectory(cachePath);
+                    }
+                    var errorPath = path + @"\Errors";
+                    if (Directory.Exists(errorPath))
+                    {
+                        FileUtil.DeleteDirectory(errorPath);
+                    }
+                    var logsPath = path + @"\Logs";
+                    if (Directory.Exists(logsPath))
+                    {
+                        FileUtil.DeleteDirectory(logsPath);
+                    }
+                }
+            }
         }
         /// <summary>
         /// 页面加载完成回调
@@ -136,8 +158,8 @@ namespace HBNiuBi
                  //加载配置
                  scriptConfigs.Sort(delegate (ScriptConfig p1, ScriptConfig p2) { return p1.Sort.CompareTo(p2.Sort); });
                  LoadJsonConfig(scriptConfigs);
-                //Thread.Sleep(2000);
-                EndLoading();
+                 //Thread.Sleep(2000);
+                 EndLoading();
              });
         }
         /// <summary>
@@ -155,8 +177,10 @@ namespace HBNiuBi
                     this.dataGridView1.Rows[index].Cells[0].Value = item.ScriptName;
                     this.dataGridView1.Rows[index].Cells[1].Value = item.Account;
                     this.dataGridView1.Rows[index].Cells[2].Value = item.Password;
-                    this.dataGridView1.Rows[index].Cells[3].Value = item.PlayerName;
+                    this.dataGridView1.Rows[index].Cells[3].Value = "";
                     this.dataGridView1.Rows[index].Cells[4].Value = Const.ScriptTaskState.Not_Started_State.Msg;
+                    this.dataGridView1.Rows[index].Cells[5].Value = "";
+                    this.dataGridView1.Rows[index].Cells[6].Value = item.StartTime;
                     ScriptItemModel scriptItemModel = new ScriptItemModel();
                     scriptItemModel.ScriptId = item.ScriptId;
                     scriptItemModel.Sort = item.Sort;
@@ -199,8 +223,10 @@ namespace HBNiuBi
                 this.dataGridView1.Rows[index].Cells[0].Value = scriptItemModel.ScriptName;
                 this.dataGridView1.Rows[index].Cells[1].Value = scriptItemModel.Account;
                 this.dataGridView1.Rows[index].Cells[2].Value = scriptItemModel.Password;
-                this.dataGridView1.Rows[index].Cells[3].Value = scriptItemModel.PlayerName;
+                this.dataGridView1.Rows[index].Cells[3].Value = scriptItemModel.DynamicCode;
                 this.dataGridView1.Rows[index].Cells[4].Value = scriptItemModel.Status.Msg;
+                this.dataGridView1.Rows[index].Cells[5].Value = "";
+                this.dataGridView1.Rows[index].Cells[6].Value = scriptItemModel.StartTime;
             }
         }
         /// <summary>
@@ -220,8 +246,10 @@ namespace HBNiuBi
                 this.dataGridView1.Rows[index].Cells[0].Value = scriptItemModel.ScriptName;
                 this.dataGridView1.Rows[index].Cells[1].Value = scriptItemModel.Account;
                 this.dataGridView1.Rows[index].Cells[2].Value = scriptItemModel.Password;
-                this.dataGridView1.Rows[index].Cells[3].Value = scriptItemModel.PlayerName;
+                this.dataGridView1.Rows[index].Cells[3].Value = scriptItemModel.DynamicCode;
                 this.dataGridView1.Rows[index].Cells[4].Value = scriptItemModel.Status.Msg;
+                this.dataGridView1.Rows[index].Cells[5].Value = "";
+                this.dataGridView1.Rows[index].Cells[6].Value = scriptItemModel.StartTime;
                 //更新任务
                 ScriptTaskSchedulerExecutor.GetInstance().UpdateTask(scriptItemModel);
             }
@@ -287,11 +315,13 @@ namespace HBNiuBi
             {
                 ScriptTaskSchedulerExecutor.GetInstance().UpdateTask(scriptItemModel);
                 dataGridView1.SelectedRows[0].Tag = scriptItemModel.ScriptId;
-                dataGridView1.SelectedRows[0].Cells[0].Value = scriptItemModel.ScriptName;
-                dataGridView1.SelectedRows[0].Cells[1].Value = scriptItemModel.Account;
-                dataGridView1.SelectedRows[0].Cells[2].Value = scriptItemModel.Password;
-                dataGridView1.SelectedRows[0].Cells[3].Value = scriptItemModel.PlayerName;
-                dataGridView1.SelectedRows[0].Cells[4].Value = scriptItemModel.Status.Msg;
+                this.dataGridView1.Rows[0].Cells[0].Value = scriptItemModel.ScriptName;
+                this.dataGridView1.Rows[0].Cells[1].Value = scriptItemModel.Account;
+                this.dataGridView1.Rows[0].Cells[2].Value = scriptItemModel.Password;
+                this.dataGridView1.Rows[0].Cells[3].Value = scriptItemModel.DynamicCode;
+                this.dataGridView1.Rows[0].Cells[4].Value = scriptItemModel.Status.Msg;
+                this.dataGridView1.Rows[0].Cells[5].Value = "";
+                this.dataGridView1.Rows[0].Cells[6].Value = scriptItemModel.StartTime;
             }
         }
         /// <summary>
@@ -332,6 +362,17 @@ namespace HBNiuBi
         {
             ToolSettingsForm toolSettingsForm = new ToolSettingsForm();
             toolSettingsForm.ShowDialog();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DM.SetDict(0, AppDomain.CurrentDomain.BaseDirectory + @"Resources\ziku.txt");
+            var hwnd = DM.FindWindowByProcessId(11472, "", "魔兽世界");
+            var dmbind = DM.BindWindowEx(hwnd, "dx.graphic.3d.10plus", "dx.mouse.position.lock.api", "dx.keypad.raw.input", "", 0);
+            //var sss = DM.Capture(1160, 4, 1190, 19, @$"{AppDomain.CurrentDomain.BaseDirectory}1.bmp");
+            var sss = DM.Capture(1159, 3, 1188, 17, @$"{AppDomain.CurrentDomain.BaseDirectory}1.bmp");
+            //var zzz=  DM.FindStr(0, 0, 2000, 2000, "要塞", "f1c600-937703", 0.8, out var x, out var y);
+            var s = DM.Ocr(0, 0, 2000, 2000, "fed000-937703", 0.7);
         }
     }
 }
