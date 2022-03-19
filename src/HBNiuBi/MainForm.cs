@@ -155,7 +155,8 @@ namespace HBNiuBi
                  DeleteGameCache(scriptConfigs);
                  if(string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Code) || string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Ver))
                  {
-                     MessageBox
+                     MessageBox.Show(this, "请填写DM注册码！否则无法启动", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                     Environment.Exit(0);
                  }
                  LoadDM(toolConfigs.DMSecret);
                  InitDataGrid();
