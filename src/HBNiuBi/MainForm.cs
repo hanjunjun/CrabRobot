@@ -153,6 +153,10 @@ namespace HBNiuBi
                  ToolSettingsConfig toolSettingsConfig = new ToolSettingsConfig(Const.ScriptXmlConfig.ToolSettingsConfig);
                  var toolConfigs = toolSettingsConfig.GetConfig();
                  DeleteGameCache(scriptConfigs);
+                 if(string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Code) || string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Ver))
+                 {
+                     MessageBox
+                 }
                  LoadDM(toolConfigs.DMSecret);
                  InitDataGrid();
                  //加载配置
