@@ -483,7 +483,7 @@ namespace HBNiuBi.ScriptTask
                     }
                     finally
                     {
-                        time.Sleep(5 * 1000);
+                        time.Sleep(1 * 1000);
                     }
                 }
             }, null
@@ -516,7 +516,7 @@ namespace HBNiuBi.ScriptTask
             move = DM.MoveTo(601, 386);
             click = DM.LeftDoubleClick();
             Log("正在操作重连中....");
-            time.Sleep(4000);
+            time.Sleep(2000);
             //判断有没有魔兽世界图标
             var fdsuiji = DM.FindPic(0, 0, 2000, 2000, "loginSelect.bmp", "000000", 0.7, 0, out shopX, out shopY);
             if (fdsuiji == -1)
@@ -586,7 +586,7 @@ namespace HBNiuBi.ScriptTask
                     result = DM.FindWindowByProcessId(this.pid, "", "魔兽世界");
                     if (result == 0)
                     {
-                        time.Sleep(1000);
+                        time.Sleep(5000);
                         continue;
                     }
                     this.hwnd = result;
@@ -595,7 +595,7 @@ namespace HBNiuBi.ScriptTask
                     if (fdsuiji == 0)
                     {
                         Log("检测到显卡兼容OK按钮！");
-                        time.Sleep(3000);
+                        time.Sleep(5000);
                         DM.MoveTo(xx, yy);
                         DM.LeftDoubleClick();
                         Log("点击显卡OK按钮成功！");
@@ -644,7 +644,7 @@ namespace HBNiuBi.ScriptTask
             time.Sleep(300);
             results = DM.MoveWindow(this.hwnd, this.scriptItemModel.X, this.scriptItemModel.Y);
             Log($"MoveWindow:{results}  x={this.scriptItemModel.X}  y={this.scriptItemModel.Y}");
-            time.Sleep(300);
+            time.Sleep(1500);
         inputAccount:
             //点协议
             result = DM.MoveTo(623, 605);
@@ -679,7 +679,7 @@ namespace HBNiuBi.ScriptTask
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
             Log($"确定");
-            time.Sleep(6000);
+            time.Sleep(3000);
             //输入动态码
             //获取动态码
             battleNetAuthenticator.Restore(this.scriptItemModel.SerialNumber, this.scriptItemModel.RestoreCode);
@@ -717,7 +717,7 @@ namespace HBNiuBi.ScriptTask
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
-            time.Sleep(3000);
+            time.Sleep(2000);
             //进入wow
             result = DM.KeyPressChar("enter");
             Log($"进入wow世界");
