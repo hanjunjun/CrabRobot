@@ -113,7 +113,7 @@ namespace HBNiuBi
         }
         private void DeleteGameCache(List<ScriptConfig> scriptConfigs)
         {
-            if (Process.GetProcessesByName("Wow") == null)
+            if (Process.GetProcessesByName("Wow").Count() == 0)
             {
                 foreach (var item in scriptConfigs)
                 {
@@ -153,7 +153,7 @@ namespace HBNiuBi
                  ToolSettingsConfig toolSettingsConfig = new ToolSettingsConfig(Const.ScriptXmlConfig.ToolSettingsConfig);
                  var toolConfigs = toolSettingsConfig.GetConfig();
                  DeleteGameCache(scriptConfigs);
-                 if(string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Code) || string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Ver))
+                 if (string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Code) || string.IsNullOrWhiteSpace(toolConfigs.DMSecret.Ver))
                  {
                      MessageBox.Show(this, "请填写DM注册码！否则无法启动", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                      Environment.Exit(0);
@@ -271,34 +271,61 @@ namespace HBNiuBi
                 var taskId = dataGridView1.SelectedRows[i].Tag.ToString();
                 //获取脚本管理器
                 var scriptModel = ScriptTaskSchedulerExecutor.GetInstance().GetScriptTaskManagerById(taskId);
-                //设置脚本内容
-                scriptModel.SetScriptAction((dm, Log) =>
+                if (scriptModel.scriptItemModel.Status == Const.ScriptTaskState.Suspend_State ||
+                    scriptModel.scriptItemModel.Status == Const.ScriptTaskState.Stopped_State ||
+                    scriptModel.scriptItemModel.Status == Const.ScriptTaskState.Not_Started_State)
                 {
-                    //执行脚本
-                    var list = new List<string>();
-                    list.Add("f11");
-                    list.Add("f12");
-                    list = list.RandomSort();
-                    foreach (var item in list)
+                    if (scriptModel.scriptItemModel.Status == Const.ScriptTaskState.Not_Started_State)
                     {
-                        var result = dm.KeyPressChar(item);
-                        Thread.Sleep(RandomUtil.RandomInt(1, 10) * 100);
-                        Log($"按下了{item}", Color.Blue);
+                        //首次启动
+                        //设置脚本内容
+                        scriptModel.SetScriptAction((dm, Log) =>
+                        {
+                            //执行脚本
+                            var list = new List<string>();
+                            list.Add("f11");
+                            list.Add("f12");
+                            list = list.RandomSort();
+                            foreach (var item in list)
+                            {
+                                var result = dm.KeyPressChar(item);
+                                Thread.Sleep(RandomUtil.RandomInt(1, 6) * 100);
+                                Log($"按下了{item}", Color.Blue);
+                            }
+
+                            //延迟间隔
+                            var value = RandomUtil.RandomInt(1, 2);
+                            Log($"延迟{value}秒", Color.Blue);
+                            Thread.Sleep(value * 600);
+                            var rdm = RandomUtil.RandomInt(1, 100);
+                            if (rdm >= 93)
+                            {
+                                dm.KeyPressChar("space");
+                                Thread.Sleep(value * 1000);
+                                Log($"延迟{value}秒", Color.Blue);
+                            }
+                            Thread.Sleep(400);
+                            dm.MoveTo(677, 146);
+                            Thread.Sleep(400);
+                            dm.LeftClick();
+                            Thread.Sleep(200);
+                            //Thread.Sleep(2 * 900);
+                            //dm.KeyPressChar("esc");
+                            //Thread.Sleep(1 * 200);
+                        });
+                        //scriptModel.SetScriptAction((dm, Log) =>
+                        //{
+                        //    //执行脚本
+                        //    var move = DM.MoveTo(600, 352);
+                        //    var click = DM.LeftDoubleClick();
+                        //});
+                        //启动脚本
+                        ScriptTaskSchedulerExecutor.GetInstance().OperateOn(taskId, Const.ScriptTaskState.Not_Started_State.FunctionName);
                     }
-                    //延迟间隔
-                    var value = RandomUtil.RandomInt(1, 4);
-                    Log($"延迟{value}秒", Color.Blue);
-                    Thread.Sleep(value * 1000);
-                    var rdm = RandomUtil.RandomInt(1, 100);
-                    if (rdm >= 93)
-                    {
-                        dm.KeyPressChar("space");
-                        Thread.Sleep(value * 1000);
-                        Log($"延迟{value}秒", Color.Blue);
-                    }
-                });
-                //启动脚本
-                ScriptTaskSchedulerExecutor.GetInstance().OperateOn(taskId, Const.ScriptTaskState.Not_Started_State.FunctionName);
+                    //继续脚本
+                    scriptModel.Continue();
+                }
+
             }
         }
         /// <summary>
@@ -378,6 +405,17 @@ namespace HBNiuBi
             var sss = DM.Capture(1159, 3, 1188, 17, @$"{AppDomain.CurrentDomain.BaseDirectory}1.bmp");
             //var zzz=  DM.FindStr(0, 0, 2000, 2000, "要塞", "f1c600-937703", 0.8, out var x, out var y);
             var s = DM.Ocr(0, 0, 2000, 2000, "fed000-937703", 0.7);
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            for (int i = dataGridView1.SelectedRows.Count - 1; i >= 0; i--)
+            {
+                var taskId = dataGridView1.SelectedRows[i].Tag.ToString();
+                //获取脚本管理器
+                var scriptModel = ScriptTaskSchedulerExecutor.GetInstance().GetScriptTaskManagerById(taskId);
+                scriptModel.Pause();
+            }
         }
     }
 }

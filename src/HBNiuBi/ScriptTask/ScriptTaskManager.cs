@@ -78,6 +78,7 @@ namespace HBNiuBi.ScriptTask
         /// 进程是否存活的线程信号
         /// </summary>
         private readonly ManualResetEvent gameDiePause = new ManualResetEvent(false);
+        private readonly ManualResetEvent scriptPause = new ManualResetEvent(false);
         /// <summary>
         /// 游戏是否开始信号
         /// </summary>
@@ -85,7 +86,7 @@ namespace HBNiuBi.ScriptTask
         /// <summary>
         /// 动态码生成器
         /// </summary>
-        private readonly BattleNetAuthenticator battleNetAuthenticator = new BattleNetAuthenticator();
+        private BattleNetAuthenticator battleNetAuthenticator;
         /// <summary>
         /// 子账号选择列表
         /// </summary>
@@ -129,6 +130,7 @@ namespace HBNiuBi.ScriptTask
         private TimeSleepSchedulerExecutor timeSleepSchedulerExecutor;
         public ScriptTaskManager(ScriptItemModel scriptItemModel)
         {
+            //battleNetAuthenticator = new BattleNetAuthenticator();
             //初始化定时器调度器
             timeSleepSchedulerExecutor = new TimeSleepSchedulerExecutor();
             SubAccounts = new Dictionary<string, string>();
@@ -203,8 +205,23 @@ namespace HBNiuBi.ScriptTask
         /// </summary>
         public void Pause()
         {
-
+            Log("脚本暂停");
+            scriptPause.Reset();
+            gameDiePause.Reset();
+            this.scriptItemModel.Status = Const.ScriptTaskState.Suspend_State;
         }
+        /// <summary>
+        /// 继续任务
+        /// </summary>
+        public void Continue()
+        {
+            Log("脚本继续");
+            scriptPause.Set();
+            //按键脚本需要登录检测成功之后自行触发
+            //gameDiePause.Set();
+            this.scriptItemModel.Status= Const.ScriptTaskState.Running_State;
+        }
+
         /// <summary>
         /// 停止任务
         /// </summary>
@@ -297,6 +314,7 @@ namespace HBNiuBi.ScriptTask
                 while (true)
                 {
                     if (destroy) return;
+                    scriptPause.WaitOne();
                     Log("检测游戏进程是否存活...");
                     try
                     {
@@ -621,6 +639,7 @@ namespace HBNiuBi.ScriptTask
             var j = 0;
             while (true)
             {
+                j++;
                 if (j > 15)
                 {
                     Log("游戏登录界面未成功打开！");
@@ -682,8 +701,22 @@ namespace HBNiuBi.ScriptTask
             time.Sleep(3000);
             //输入动态码
             //获取动态码
-            battleNetAuthenticator.Restore(this.scriptItemModel.SerialNumber, this.scriptItemModel.RestoreCode);
+            try
+            {
+                if (battleNetAuthenticator == null)
+                {
+                    Log($"初始化手机动态码获取...");
+                    battleNetAuthenticator = new BattleNetAuthenticator();
+                    battleNetAuthenticator.Restore(this.scriptItemModel.SerialNumber, this.scriptItemModel.RestoreCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"获取手机动态码报错:{ex.Message}");
+            }
+
             var dynamicCode = this.battleNetAuthenticator.CurrentCode;
+            Log($"手机动态码刷新成功={dynamicCode}...");
             result = DM.MoveTo(576, 350);
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
@@ -717,10 +750,31 @@ namespace HBNiuBi.ScriptTask
             Log($"MoveTo:{result}");
             result = DM.LeftDoubleClick();
             Log($"LeftDoubleClick:{result}");
-            time.Sleep(2000);
-            //进入wow
-            result = DM.KeyPressChar("enter");
-            Log($"进入wow世界");
+            var shopX = -1;
+            var shopY = -1;
+            //进入游戏
+            var jx = 0;
+            while (true)
+            {
+                jx++;
+                if (jx > 15)
+                {
+                    Log("登录游戏失败，没找到进入游戏按钮！");
+                    throw new Exception("登录游戏失败，没找到进入游戏按钮！");
+                }
+                fdsuiji = DM.FindPic(0, 0, 2000, 2000, "jinruwow.bmp", "000000", 0.7, 1, out shopX, out shopY);
+                if (fdsuiji == -1)
+                {
+                    Log($"当前第{jx}次,没有查询到进入游戏按钮");
+                    time.Sleep(1000);
+                    continue;
+                }
+                DM.MoveTo(shopX + 2, shopY + 2);
+                DM.LeftDoubleClick();
+                Log("进入游戏世界成功....");
+                Thread.Sleep(10000);
+                break;
+            }
         }
 
         /// <summary>
@@ -736,6 +790,7 @@ namespace HBNiuBi.ScriptTask
                     Log("脚本执行中...");
                     try
                     {
+                        scriptPause.WaitOne();
                         gameDiePause.WaitOne();
                         this.scriptAction(DM, Log);
                     }

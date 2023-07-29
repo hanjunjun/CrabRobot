@@ -142,6 +142,7 @@
             this.toolStripButton3.Size = new System.Drawing.Size(52, 32);
             this.toolStripButton3.Tag = "暂停";
             this.toolStripButton3.Text = "暂停";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // toolStripButton4
             // 
